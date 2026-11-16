@@ -1,5 +1,5 @@
 name: hola-mundo
-
+run-name: ¡Estoy aprendiendo GitHub Actions!
 on:
   push:
     branches:
@@ -10,16 +10,14 @@ on:
 
 jobs:
   ejecutar-script:
-    name: Print Hola Mundo
+    name: Print Hola Mundo JOB
     runs-on: ubuntu-latest
     steps:
       - name: Descargar el repositorio
         uses: actions/checkout@v4
 
-      - name: Configurar Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
+      - name: Definir Variabe
+        run: echo "USERNAME=${{ github.actor }}" >> $GITHUB_ENV
 
-      - name: Print Hola Mundo
+      - name: Corre script Hola Mundo
         run: python python_script.py
