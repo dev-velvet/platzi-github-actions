@@ -1,0 +1,69 @@
+name: NexoPay - Build y Validacion
+
+run-name: "NexoPay | ${{ github.event_name }} por @${{ github.actor }} en ${{ github.ref_name }}"
+
+env:
+  SERVICIO: facturacion-api
+  ENTORNO_DEFECTO: staging
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+    inputs:
+      entorno:
+        description: '¿A qué entorno deseas preparar el paquete?'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      ejecutar_pruebas_pesadas:
+        description: '¿Ejecutar suite completa de pruebas?'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  preparar_y_validar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar codigo del repositorio
+        uses: actions/checkout@v4
+
+      - name: Mostrar contexto del evento y el runner
+        run: |
+          echo "Repositorio: ${{ github.repository }}"
+          echo "Rama o ref corta: ${{ github.ref_name }}"
+          echo "Usuario que lanzo el flujo: ${{ github.actor }}"
+          echo "Sistema operativo del runner: ${{ runner.os }} (${{ runner.arch }})"
+          echo "ID de ejecucion: ${{ github.run_id }} (Intento #${{ github.run_attempt }})"
+          echo "Job actual: ${{ github.job }}"
+
+      - name: Determinar entorno objetivo
+        id: config_entorno
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            ENTORNO="${{ inputs.entorno }}"
+          elif [ "${{ github.ref_name }}" == "main" ]; then
+            ENTORNO="production"
+          else
+            ENTORNO="${{ env.ENTORNO_DEFECTO }}"
+          fi
+
+          echo "entorno=$ENTORNO" >> "$GITHUB_OUTPUT"
+          echo "Preparando $SERVICIO para entorno: $ENTORNO"
+
+      - name: Pruebas completas (solo si se solicito manualmente)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ejecutar_pruebas_pesadas == true }}
+        run: |
+          echo "Ejecutando pruebas completas para ${{ steps.config_entorno.outputs.entorno }}..."
+
+      - name: Resumen final del despliegue
+        run: |
+          echo "Servicio: ${{ env.SERVICIO }}"
+          echo "Entorno elegido: ${{ steps.config_entorno.outputs.entorno }}"
+          echo "Estado del paso de pruebas: ${{ steps.config_entorno.outcome }}"
