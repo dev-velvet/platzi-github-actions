@@ -1,0 +1,22 @@
+name: hola-mundo
+run-name: ¡Estoy aprendiendo GitHub Actions!
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ejecutar-script:
+    name: Print Hola Mundo JOB
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Corre script Hola Mundo
+        run: python python_script.py
+        env:
+          USERNAME: ${{ github.actor }}
