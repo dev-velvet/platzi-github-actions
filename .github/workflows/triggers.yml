@@ -5,14 +5,14 @@ on:
   push:
     branches:
       - aprendiendo-github-actions
-  
+
   pull_request:
     branches:
       - aprendiendo-github-actions
 
   issues:
     types: [opened, edited, closed]
-  
+
   issue_comment:
     types: [created, edited, deleted]
 
@@ -22,13 +22,13 @@ on:
         description: 'Escribe tu nombre'
         required: true
         default: 'Platzi'
-  
+
   schedule:
-    -cron: '10 3, 18, * * *'
+    - cron: '10 3,18 * * *'
 
 jobs:
   desplegar:
     runs-on: ubuntu-latest
     steps:
       - name: Ejecutar despliegue
-        run: echo "Iniciando despliegue manual..."
+        run: echo "Iniciando despliegue manual... ${{ inputs.nombre }}"
