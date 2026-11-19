@@ -1,5 +1,6 @@
 # Si haces push a develop: github.event_name es push, github.ref_name es develop,
-# el paso config_entorno asigna staging y el paso de pruebas pesadas se omite (skipped) porque no fue disparado por workflow_dispatch.
+# el paso config_entorno asigna staging y el paso de pruebas se omite (skipped)
+# porque no fue disparado por workflow_dispatch.
 
 # Si haces push a main: El paso config_entorno asigna production automáticamente según la rama.
 
@@ -7,9 +8,9 @@
 # para que corra el paso condicional.
 
 
-name: NexoPay - Build y Validacion
+name: Preparar despliegue y pruebas
 
-run-name: "NexoPay | ${{ github.event_name }} por @${{ github.actor }} en ${{ github.ref_name }}"
+run-name: " Preparar despliegue y pruebas | ${{ github.event_name }} por @${{ github.actor }} en ${{ github.ref_name }}"
 
 env:
   SERVICIO: facturacion-api
@@ -69,10 +70,4 @@ jobs:
       - name: Pruebas completas (solo si se solicito manualmente)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.ejecutar_pruebas_pesadas == true }}
         run: |
-          echo "Ejecutando pruebas completas para ${{ steps.config_entorno.outputs.entorno }}..."
-
-      - name: Resumen final del despliegue
-        run: |
-          echo "Servicio: ${{ env.SERVICIO }}"
-          echo "Entorno elegido: ${{ steps.config_entorno.outputs.entorno }}"
-          echo "Estado del paso de pruebas: ${{ steps.config_entorno.outcome }}"
+          echo "Ejecutando pruebas completas para ${{ steps.config_entorno.outputs.entorno }}"
