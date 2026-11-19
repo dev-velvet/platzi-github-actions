@@ -31,7 +31,7 @@ on:
         options:
           - staging
           - production
-      ejecutar_pruebas_pesadas:
+      ejecutar_pruebas:
         description: '¿Ejecutar suite completa de pruebas?'
         required: false
         default: false
