@@ -1,0 +1,53 @@
+name: Expresiones y Logica
+
+on:
+  workflow_dispatch:
+    inputs:
+      edad:
+        description: '¿Qué edad tienes?'
+        required: true
+        type: integer
+      ciudad:
+        description: '¿En qué ciudad estás?'
+        required: true
+        default: 'Medellín'
+        type: string
+      tiene_entrada:
+        description: '¿Tienes entrada?'
+        required: true
+        default: true
+        type: boolean
+      es_vip:
+        description: '¿Tienes pase VIP?'
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  acceso_general:
+    if: ${{ inputs.edad >= 18 && inputs.tiene_entrada == true }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validar ingreso general
+        run: echo "Acceso concedido en ${{ inputs.ciudad }}."
+
+  acceso_denegado:
+    if: ${{ inputs.edad < 18 || inputs.tiene_entrada == false }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Motivo de denegacion
+        run: echo "No puedes ingresar: revisa tu edad (${{ inputs.edad }}) o si tienes entrada (${{ inputs.tiene_entrada }})."
+
+  zona_vip:
+    if: ${{ (inputs.ciudad == 'Medellín' || inputs.ciudad == 'Bogotá') && inputs.es_vip }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Asignar zona VIP
+        run: echo "Bienvenido a zona VIP en ${{ inputs.ciudad }}."
+
+  no_vip:
+    if: ${{ !inputs.es_vip }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Invitacion a upgrade
+        run: echo "No eres VIP."
