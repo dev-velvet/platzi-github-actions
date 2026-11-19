@@ -1,3 +1,12 @@
+# Si haces push a develop: github.event_name es push, github.ref_name es develop,
+# el paso config_entorno asigna staging y el paso de pruebas pesadas se omite (skipped) porque no fue disparado por workflow_dispatch.
+
+# Si haces push a main: El paso config_entorno asigna production automáticamente según la rama.
+
+# Si corres con Run workflow: Puedes elegir staging o production en inputs.entorno y activar inputs.ejecutar_pruebas_pesadas
+# para que corra el paso condicional.
+
+
 name: NexoPay - Build y Validacion
 
 run-name: "NexoPay | ${{ github.event_name }} por @${{ github.actor }} en ${{ github.ref_name }}"
